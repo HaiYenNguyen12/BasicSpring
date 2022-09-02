@@ -1,9 +1,17 @@
 package com.haiyen.model;
 
+import java.util.List;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
+import lombok.Data;
+
 
 
 @Entity
+@Data
 @Table(name = "user")
 public class User {
 	
@@ -13,61 +21,46 @@ public class User {
 	
 	
 	@Column(nullable = false, unique = true, length = 45)
+	@NotEmpty
+	@Email(message= "{errors.invalid_email}")
 	private String email;
 	
+	@NotEmpty
 	@Column(length = 15, name = "first_name")
+	
 	private String firstname;
 	@Column(length = 15, name = "last_name")
 	private String lastname;
 	@Column(length = 15, nullable = false)
 	private String password;
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getFirstname() {
-		return firstname;
-	}
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
-	public String getLastname() {
-		return lastname;
-	}
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "user_role",
+			joinColumns= {@JoinColumn(name = "USER_ID", referencedColumnName="ID")},
+		    inverseJoinColumns = {@JoinColumn (name="ROLE_ID", referencedColumnName ="ID")}
+			)
+	
+	private List<Role> roles;
 	
 	
+	public User(User user) {
 	
-	private boolean enabled;
-	
-	public boolean isEnabled() {
-		return enabled;
+		this.id = user.getId();
+		this.email = user.getEmail();
+		this.firstname = user.getFirstname();
+		this.lastname = user.getLastname();
+		this.password = user.getPassword();
+		this.roles = user.getRoles();
 	}
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public User() {
+		
 	}
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", email=" + email + ", firstname=" + firstname + ", lastname=" + lastname
-				+ ", password=" + password + "]";
-	}
-	
+//	@Override
+//	public String toString() {
+//		return "User [id=" + id + ", email=" + email + ", firstname=" + firstname + ", lastname=" + lastname
+//				+ ", password=" + password + "]";
+//	}
+//	
 	
 	
 	
